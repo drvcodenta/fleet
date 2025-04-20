@@ -62,10 +62,12 @@ interface ITableContainerProps<T = any> {
   searchable?: boolean;
   wideSearch?: boolean;
   disablePagination?: boolean;
-  disableNextPage?: boolean; // disableNextPage is a temporary workaround for the case
-  // where the number of items on the last page is equal to the page size.
-  // The old page controls for server-side pagination render a no results screen
-  // with a back button. This fix instead disables the next button in that case.
+  /**
+   * Disables the "Next" button when the last page contains exactly the page size items.
+   * This is determined using either the API's `meta.has_next_page` response
+   * or by calculating `isLastPage` in the frontend.
+   */
+  disableNextPage?: boolean;
   disableCount?: boolean;
   /** Main button after selecting a row */
   primarySelectAction?: IActionButtonProps;
@@ -300,7 +302,7 @@ const TableContainer = <T,>({
               <Button
                 disabled={disableActionButton || disableChildren}
                 onClick={actionButton.onActionButtonClick}
-                variant={actionButton.variant || "brand"}
+                variant={actionButton.variant || "default"}
                 className={`${baseClass}__table-action-button`}
               >
                 <>
@@ -316,7 +318,7 @@ const TableContainer = <T,>({
         <Button
           disabled={disableActionButton}
           onClick={actionButton.onActionButtonClick}
-          variant={actionButton.variant || "brand"}
+          variant={actionButton.variant || "default"}
           className={`${baseClass}__table-action-button`}
         >
           <>
