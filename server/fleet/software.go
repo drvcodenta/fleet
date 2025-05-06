@@ -240,6 +240,7 @@ type SoftwareTitleListResult struct {
 	// the software installed. It's surfaced in software_titles to match
 	// with existing software entries.
 	BundleIdentifier *string `json:"bundle_identifier,omitempty" db:"bundle_identifier"`
+	HashSHA256       *string `json:"hash_sha256,omitempty" db:"package_storage_id"`
 }
 
 type SoftwareTitleListOptions struct {
@@ -480,4 +481,9 @@ type VPPBatchPayloadWithPlatform struct {
 	InstallDuringSetup *bool               `json:"install_during_setup"` // keep saved value if nil, otherwise set as indicated
 	LabelsExcludeAny   []string            `json:"labels_exclude_any"`
 	LabelsIncludeAny   []string            `json:"labels_include_any"`
+}
+
+type SoftwareCategory struct {
+	ID   uint   `db:"id"`
+	Name string `db:"name"`
 }
