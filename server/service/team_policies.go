@@ -103,10 +103,13 @@ func (svc Service) NewTeamPolicy(ctx context.Context, teamID uint, tp fleet.NewT
 	// Note: Issue #4191 proposes that we move to SQL transactions for actions so that we can
 	// rollback an action in the event of an error writing the associated activity
 
-	// Populate team_id and team_name for team policies
-	team, err := svc.ds.Team(ctx, teamID)
-	if err != nil {
-		return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+	var teamName *string
+	if teamID != 0 {
+		team, err := svc.EnterpriseOverrides.TeamByIDOrName(ctx, &teamID, nil)
+		if err != nil {
+			return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+		}
+		teamName = &team.Name
 	}
 
 	if err := svc.NewActivity(
@@ -115,8 +118,8 @@ func (svc Service) NewTeamPolicy(ctx context.Context, teamID uint, tp fleet.NewT
 		fleet.ActivityTypeCreatedPolicy{
 			ID:       policy.ID,
 			Name:     policy.Name,
-			TeamID:   &team.ID,
-			TeamName: &team.Name,
+			TeamID:   &teamID,
+			TeamName: teamName,
 		},
 	); err != nil {
 		return nil, ctxerr.Wrap(ctx, err, "create activity for team policy creation")
@@ -428,10 +431,13 @@ func (svc Service) DeleteTeamPolicies(ctx context.Context, teamID uint, ids []ui
 	// Note: Issue #4191 proposes that we move to SQL transactions for actions so that we can
 	// rollback an action in the event of an error writing the associated activity
 
-	// Populate team_id and team_name for team policies
-	team, err := svc.ds.Team(ctx, teamID)
-	if err != nil {
-		return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+	var teamName *string
+	if teamID != 0 {
+		team, err := svc.EnterpriseOverrides.TeamByIDOrName(ctx, &teamID, nil)
+		if err != nil {
+			return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+		}
+		teamName = &team.Name
 	}
 
 	for _, id := range deletedIDs {
@@ -441,8 +447,8 @@ func (svc Service) DeleteTeamPolicies(ctx context.Context, teamID uint, ids []ui
 			fleet.ActivityTypeDeletedPolicy{
 				ID:       id,
 				Name:     policiesByID[id].Name,
-				TeamID:   &team.ID,
-				TeamName: &team.Name,
+				TeamID:   &teamID,
+				TeamName: teamName,
 			},
 		); err != nil {
 			return nil, ctxerr.Wrap(ctx, err, "create activity for policy deletion")
@@ -607,10 +613,14 @@ func (svc *Service) modifyPolicy(ctx context.Context, teamID *uint, id uint, p f
 
 	// Note: Issue #4191 proposes that we move to SQL transactions for actions so that we can
 	// rollback an action in the event of an error writing the associated activity
-	// Populate team_id and team_name for team policies
-	team, err := svc.ds.Team(ctx, *teamID)
-	if err != nil {
-		return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+
+	var teamName *string
+	if teamID != nil && *teamID != 0 {
+		team, err := svc.EnterpriseOverrides.TeamByIDOrName(ctx, teamID, nil)
+		if err != nil {
+			return nil, ctxerr.Wrap(ctx, err, "fetching team details")
+		}
+		teamName = &team.Name
 	}
 
 	if err := svc.NewActivity(
@@ -619,8 +629,8 @@ func (svc *Service) modifyPolicy(ctx context.Context, teamID *uint, id uint, p f
 		fleet.ActivityTypeEditedPolicy{
 			ID:       policy.ID,
 			Name:     policy.Name,
-			TeamID:   &team.ID,
-			TeamName: &team.Name,
+			TeamID:   teamID,
+			TeamName: teamName,
 		},
 	); err != nil {
 		return nil, ctxerr.Wrap(ctx, err, "create activity for policy modification")
