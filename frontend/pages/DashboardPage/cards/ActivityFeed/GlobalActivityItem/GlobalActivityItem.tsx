@@ -789,8 +789,20 @@ const TAGGED_TEMPLATES = {
       </>
     );
   },
-  deletedMultipleSavedQuery: () => {
-    return <> deleted multiple queries.</>;
+  deletedMultipleSavedQuery: (activity: IActivity) => {
+    return (
+      <>
+        {" "}
+        deleted multiple queries{" "}
+        {activity.details?.team_name ? (
+          <>
+            from the <b>{activity.details.team_name}</b> team
+          </>
+        ) : (
+          "globally"
+        )}
+      </>
+    );
   },
   lockedHost: (activity: IActivity) => {
     return (
@@ -1430,7 +1442,7 @@ const getDetail = (activity: IActivity, isPremiumTier: boolean) => {
       return TAGGED_TEMPLATES.editedWindowsUpdates(activity);
     }
     case ActivityType.DeletedMultipleSavedQuery: {
-      return TAGGED_TEMPLATES.deletedMultipleSavedQuery();
+      return TAGGED_TEMPLATES.deletedMultipleSavedQuery(activity);
     }
     case ActivityType.LockedHost: {
       return TAGGED_TEMPLATES.lockedHost(activity);
