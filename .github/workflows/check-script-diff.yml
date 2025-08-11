@@ -1,0 +1,19 @@
+name: Check Script Diff(using /ee/maintained-apps/script-diff.sh)
+
+on:
+    push:
+        branches:
+            - workflow/check-script-diff
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        
+        steps:
+            - uses: actions/checkout@v4
+              
+            - name: run a script to check
+              run: echo "hello, github actions!"
+
+# actually now i can see that the action is working on the push action, fine and returning the hello, github actions! message
+# but now i want to check the script diff using the script-diff.sh script on some changed
