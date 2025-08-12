@@ -19,7 +19,6 @@ jobs:
                 git fetch origin workflow/check-script-diff
                 git diff origin/workflow/check-script-diff HEAD \
                 | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' \
-                | grep -E '"(install_script_ref|uninstall_script_ref)"' \
                 > changed_manifests.txt
                 cat changed_manifests.txt
                 if [ ! -s changed_manifests.txt ]; then
