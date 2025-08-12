@@ -12,8 +12,20 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               
-            - name: run a script to check
-              run: echo "hello, github actions!"
+            - name: Get Changed Manifest Files # fetch the changed manifest files
+              id: changed_files
+              run: |
+                echo "Fetching changed files..."
+                git fetch origin workflow/check-script-diff
+                git diff origin/workflow/check-script-diff HEAD \
+                | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' \
+                | grep -E '"(install_script_ref|uninstall_script_ref)"' \
+                > changed_manifests.txt
+                cat changed_manifests.txt
+                if [ ! -s changed_manifests.txt ]; then
+                    echo "No changed manifest files found."
+                    exit 0
+                fi
 
 # actually now i can see that the action is working on the push action, fine and returning the hello, github actions! message
 # but now i want to check the script diff using the script-diff.sh script on some changed
