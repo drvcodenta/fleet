@@ -16,7 +16,7 @@ jobs:
               id: changed_files
               run: |
                 echo "Fetching changed files..."
-                git fetch origin workflow/check-script-diff
+                git diff HEAD^ HEAD \
                 git diff origin/workflow/check-script-diff HEAD \
                 | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' \
                 > changed_manifests.txt || true
