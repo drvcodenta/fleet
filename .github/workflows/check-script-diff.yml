@@ -19,7 +19,7 @@ jobs:
                 git fetch origin workflow/check-script-diff
                 git diff origin/workflow/check-script-diff HEAD \
                 | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' \
-                > changed_manifests.txt
+                > changed_manifests.txt || true
                 cat changed_manifests.txt
                 if [ ! -s changed_manifests.txt ]; then
                     echo "No changed manifest files found."
