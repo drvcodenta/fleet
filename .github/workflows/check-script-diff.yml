@@ -11,6 +11,8 @@ jobs:
         
         steps:
             - uses: actions/checkout@v4
+              with:
+                fetch-depth: 0  # Fetch full history so merge base can be found
               
             - name: Get Changed Manifest Files # fetch the changed manifest files
               id: changed_files
