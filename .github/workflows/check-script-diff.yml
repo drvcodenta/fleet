@@ -16,10 +16,8 @@ jobs:
               id: changed_files
               run: |
                 echo "Fetching changed files..."
-                git diff HEAD^ HEAD \
-                git diff origin/workflow/check-script-diff HEAD \
-                | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' \
-                > changed_manifests.txt || true
+                git fetch origin main
+                git diff --name-only origin/main...HEAD | grep -E 'ee/maintained-apps/(inputs|outputs)/.*\.json$' > changed_manifests.txt || true
                 cat changed_manifests.txt
                 if [ ! -s changed_manifests.txt ]; then
                     echo "No changed manifest files found."
