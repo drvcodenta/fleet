@@ -25,6 +25,11 @@ jobs:
                     echo "No changed manifest files found."
                     exit 0
                 fi
-
-# actually now i can see that the action is working on the push action, fine and returning the hello, github actions! message
-# but now i want to check the script diff using the script-diff.sh script on some changed
+            - name: Run script-diff.sh on changed files
+              run: |
+                echo "Running script-diff.sh on changed manifest files..."
+                while read -r file; do
+                  echo "=== Processing $file ==="
+                  ./ee/maintained-apps/script-diff.sh "$file" || true
+                  echo ""
+                done < changed_manifests.txt
