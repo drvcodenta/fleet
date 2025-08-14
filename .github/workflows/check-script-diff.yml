@@ -25,34 +25,11 @@ jobs:
                     echo "No changed manifest files found."
                     exit 0
                 fi
-            - name: Run script-diff.sh and capture output
+            - name: Run script-diff.sh on changed files
               run: |
-                echo "Running script-diff.sh on files with script ref changes..."
-                > script_diff_output.txt
+                echo "Running script-diff.sh on changed manifest files..."
                 while read -r file; do
-                  echo "=== Processing $file ===" >> script_diff_output.txt
-                  ./ee/maintained-apps/script-diff.sh "$file" >> script_diff_output.txt 2>&1 || true
-                  echo "" >> script_diff_output.txt
-                done < script_ref_changed_files.txt
-
-            - name: Comment script diff on PR
-              uses: actions/github-script@v7
-              with:
-                script: |
-                  const fs = require('fs');
-                  const diffOutput = fs.readFileSync('script_diff_output.txt', 'utf8');
-                  
-                  const commentBody = `## Script Diff Results
-
-                  The following install/uninstall script changes were detected:
-
-                  \`\`\`
-                  ${diffOutput}
-                  \`\`\``;
-                  
-                  await github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: commentBody
-                  });
+                  echo "=== Processing $file ==="
+                  ./ee/maintained-apps/script-diff.sh "$file" || true
+                  echo ""
+                done < changed_manifests.txt
