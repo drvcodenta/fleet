@@ -43,8 +43,8 @@ jobs:
                   const fs = require('fs');
                   const output = fs.readFileSync('script_output.txt', 'utf8').trim();
                   
-                  // Only comment if there's actual content
-                  if (output && !output.includes('(no changes)')) {
+                  // Only comment if there are actual diffs (not just "no changes" messages)
+                  if (output && !output.includes('(no changes)') && output.replace(/=== .+ ===/g, '').trim()) {
                     await github.rest.issues.createComment({
                       issue_number: context.issue.number,
                       owner: context.repo.owner,
