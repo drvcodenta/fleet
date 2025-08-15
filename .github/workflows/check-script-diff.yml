@@ -41,14 +41,11 @@ jobs:
               with:
                 script: |
                   const fs = require('fs');
-                  const output = fs.readFileSync('script_output.txt', 'utf8').trim();
+                  const output = fs.readFileSync('script_output.txt', 'utf8');
                   
-                  // Only comment if there are actual diffs (not just "no changes" messages)
-                  if (output && !output.includes('(no changes)') && output.replace(/=== .+ ===/g, '').trim()) {
-                    await github.rest.issues.createComment({
-                      issue_number: context.issue.number,
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      body: `## Script Diff Results\n\n\`\`\`\n${output}\n\`\`\``
-                    });
-                  }
+                  await github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: `## Script Diff Results\n\n\`\`\`\n${output}\n\`\`\``
+                  });
