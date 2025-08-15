@@ -41,11 +41,29 @@ jobs:
               with:
                 script: |
                   const fs = require('fs');
-                  const output = fs.readFileSync('script_output.txt', 'utf8');
+                  const output = fs.readFileSync('script_output.txt', 'utf8').trim();
                   
-                  await github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: `## Script Diff Results\n\n\`\`\`\n${output}\n\`\`\``
+                  // Check if output contains meaningful changes
+                  // Skip if output only contains processing headers and "no changes" messages
+                  const lines = output.split('\n').map(line => line.trim()).filter(line => line !== '');
+                  const hasRealChanges = lines.some(line => {
+                    return (!line.startsWith('=== Processing') && 
+                            !line.includes('(no changes)') &&
+                            !line.startsWith('===')) ||
+                           line.includes('diff ') ||
+                           line.startsWith('@@') ||
+                           line.startsWith('+') ||
+                           line.startsWith('-');
                   });
+                  
+                  if (hasRealChanges) {
+                    await github.rest.issues.createComment({
+                      issue_number: context.issue.number,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      body: `## Script Diff Results\n\n\`\`\`\n${output}\n\`\`\``
+                    });
+                    console.log('Posted comment with script diff results');
+                  } else {
+                    console.log('No meaningful changes detected, skipping comment');
+                  }
