@@ -57,10 +57,10 @@ jobs:
                   });
                   // separate fences for better readability
                   if (hasRealChanges) {
-                    const formattedOutput = output.replace(
+                    const formattedOutput = ('=== Processing START ===\n' + output).replace(
                       /=== Processing (.+) ===/g,
                       '### $1\n```'
-                    );
+                    ).replace('### START\n```', '');
                     await github.rest.issues.createComment({
                       issue_number: context.issue.number,
                       owner: context.repo.owner,
