@@ -59,7 +59,7 @@ jobs:
                   if (hasRealChanges) {
                     const formattedOutput = output.replace(
                       /=== Processing (.+) ===/g,
-                      '```\n\n### $1\n```'
+                      '### $1\n```'
                     );
                     await github.rest.issues.createComment({
                       issue_number: context.issue.number,
