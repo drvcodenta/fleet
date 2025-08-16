@@ -57,15 +57,24 @@ jobs:
                   });
                   // separate fences for better readability
                   if (hasRealChanges) {
-                  const formattedOutput = ('=== Processing START ===\n' + output).replace(
-                    /=== Processing (.+) ===/g,
-                    '### $1\n```'
-                  ).replace('### START\n```', '');
+                    // Split content by processing headers and rebuild properly
+                    const parts = output.split(/=== Processing (.+?) ===/);
+                    let formattedOutput = '';
+                    
+                    // Skip first empty part, then process pairs of (filename, content)
+                    for (let i = 1; i < parts.length; i += 2) {
+                      const filename = parts[i];
+                      const content = parts[i + 1] || '';
+                      if (filename && content.trim()) {
+                        formattedOutput += `### ${filename}\n\`\`\`\n${content.trim()}\n\`\`\`\n\n`;
+                      }
+                    }
+                    
                     await github.rest.issues.createComment({
                       issue_number: context.issue.number,
                       owner: context.repo.owner,
                       repo: context.repo.repo,
-                      body: `## Script Diff Results\n\n${formattedOutput}\n\`\`\``
+                      body: `## Script Diff Results\n\n${formattedOutput.trim()}`
                     });
                     console.log('Posted comment with script diff results');
                   } else {
