@@ -59,13 +59,13 @@ jobs:
                   if (hasRealChanges) {
                     const formattedOutput = output.replace(
                       /=== Processing (.+) ===/g,
-                      '### $1\n```'
+                      '```\n\n### $1\n```'
                     );
                     await github.rest.issues.createComment({
                       issue_number: context.issue.number,
                       owner: context.repo.owner,
                       repo: context.repo.repo,
-                      body: `## Script Diff Results\n\n\`\`\`\n${formattedOutput}\n\`\`\``
+                      body: `## Script Diff Results\n\n${formattedOutput}\n\`\`\``
                     });
                     console.log('Posted comment with script diff results');
                   } else {
