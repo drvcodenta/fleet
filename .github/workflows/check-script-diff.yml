@@ -65,7 +65,7 @@ jobs:
                       issue_number: context.issue.number,
                       owner: context.repo.owner,
                       repo: context.repo.repo,
-                      body: `## Script Diff Results\n\n\`\`\`\n${output}\n\`\`\``
+                      body: `## Script Diff Results\n\n\`\`\`\n${formattedOutput}\n\`\`\``
                     });
                     console.log('Posted comment with script diff results');
                   } else {
