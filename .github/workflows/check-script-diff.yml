@@ -66,7 +66,7 @@ jobs:
                       const filename = parts[i];
                       const content = parts[i + 1] || '';
                       if (filename && content.trim()) {
-                        formattedOutput += `### ${filename}\n\`\`\`\n${content.trim()}\n\`\`\`\n\n`;
+                        formattedOutput += `### ${filename}\n\`\`\`diff\n${content.trim()}\n\`\`\`\n\n`;
                       }
                     }
                     
